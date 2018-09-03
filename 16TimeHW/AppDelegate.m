@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "EGBStudent.h"
 
 @interface AppDelegate ()
 
@@ -14,9 +15,37 @@
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+#pragma mark - Level "Pupil"
+    
+    NSMutableArray *allStudents = [NSMutableArray array];
+    NSDate *date = [NSDate date];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [[NSDateComponents alloc] init];
+    
+    for (int i = 0; i < 30; i++) {
+        
+        EGBStudent *student = [EGBStudent studentName:[NSString stringWithFormat:@"Student #%d", i+1]];
+        
+        NSInteger ageOfStud = arc4random() % 35 + 16;
+        NSInteger monthOfBirth = arc4random() % 12 + 1;
+        NSInteger dayOfBirth = arc4random() % 30 + 1;
+        
+        [components setYear: - ageOfStud];
+        [components setMonth:monthOfBirth];
+        [components setDay:dayOfBirth];
+        
+        student.dateOfBirth = [calendar dateByAddingComponents:components toDate:date options:0];
+        
+        [allStudents addObject:student];
+    }
+    
+    for (EGBStudent *stud in allStudents) {
+        NSLog(@"%@", stud);
+    }
+    
     return YES;
 }
 
