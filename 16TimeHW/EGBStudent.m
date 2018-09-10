@@ -10,11 +10,12 @@
 
 @implementation EGBStudent
 
-+ (EGBStudent*) studentName:(NSString*) name {
++ (EGBStudent*) studentName:(NSString*) name lastName:(NSString*) surname {
     
     EGBStudent* stundent = [[EGBStudent alloc] init];
     
-    stundent.name = name;
+    stundent.firstName = name;
+    stundent.lastName = surname;
     
     return stundent;
     
@@ -32,7 +33,7 @@
     NSDateComponents* components =
     [calendar components:NSCalendarUnitYear fromDate:_dateOfBirth toDate:date options:0];
     
-    return [NSString stringWithFormat:(@"%@, date of birth: %@, %ld years old"), _name, [dateFormatter stringFromDate:_dateOfBirth], [components year]];
+    return [NSString stringWithFormat:(@"%@ %@, date of birth: %@, %ld years old"), _firstName, _lastName, [dateFormatter stringFromDate:_dateOfBirth], [components year]];
     
 }
 

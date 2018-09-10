@@ -10,10 +10,11 @@
 
 @interface EGBStudent : NSObject
 
-@property (strong, nonatomic) NSDate* dateOfBirth;
-@property (strong, nonatomic) NSString* name;
+@property (strong, nonatomic) NSDate *dateOfBirth;
+@property (strong, nonatomic) NSString *firstName;
+@property (strong, nonatomic) NSString *lastName;
 
-+ (EGBStudent*) studentName:(NSString*) name;
++ (EGBStudent*) studentName:(NSString*) name lastName:(NSString*) surname;
 
 
 @end

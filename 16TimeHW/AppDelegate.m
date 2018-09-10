@@ -18,13 +18,16 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-#pragma mark - Level "Pupil"
-    
     NSMutableArray *allStudents = [NSMutableArray array];
     NSDate *date = [NSDate date];
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDateComponents *components = [[NSDateComponents alloc] init];
-    
+    NSArray *firstNames = [NSArray arrayWithObjects:@"Steve", @"John", @"Richard", @"Paul", @"Gary", @"Zakk", @"Floyd", @"Roger", @"Robert", @"Nancy", nil];
+    NSArray *lastNames = [NSArray arrayWithObjects:@"Gilbert", @"Vai", @"Maywather", @"Satriani", @"Moor", @"Waild", @"Bronson", @"Born", @"Osborn", @"Parker", nil];
+  
+    /*
+     #pragma mark - Level "Pupil"
+     
     for (int i = 0; i < 30; i++) {
         
         EGBStudent *student = [EGBStudent studentName:[NSString stringWithFormat:@"Student #%d", i+1]];
@@ -45,7 +48,48 @@
     for (EGBStudent *stud in allStudents) {
         NSLog(@"%@", stud);
     }
+     */
     
+    
+#pragma mark - Level "Student"
+    
+    for (int i = 0; i < 30; i++) {
+        
+        NSInteger randomNames = arc4random_uniform(10);
+        NSInteger ramdomLastNames = arc4random_uniform(10);
+        
+        EGBStudent *student = [EGBStudent studentName:firstNames[randomNames] lastName:lastNames[ramdomLastNames]];
+        
+        NSInteger ageOfStud = arc4random() % 35 + 16;
+        NSInteger monthOfBirth = arc4random() % 12 + 1;
+        NSInteger dayOfBirth = arc4random() % 30 + 1;
+        
+        [components setYear: - ageOfStud];
+        [components setMonth:monthOfBirth];
+        [components setDay:dayOfBirth];
+        
+        student.dateOfBirth = [calendar dateByAddingComponents:components toDate:date options:0];
+        
+        [allStudents addObject:student];
+    }
+    
+    for (EGBStudent *stud in allStudents) {
+        NSLog(@"%@", stud);
+    }
+    NSLog(@" ");
+    
+    
+    NSArray *sortedByDateOfBirth = [allStudents sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        return [[obj2 dateOfBirth] compare:[obj1 dateOfBirth]];
+    }];
+    
+    NSLog(@"Sorted students by dates of birth:");
+    NSLog(@" ");
+    for (EGBStudent *stud in sortedByDateOfBirth) {
+        NSLog(@"%@", stud);
+    }
+
+
     return YES;
 }
 
