@@ -11,6 +11,9 @@
 
 @interface AppDelegate ()
 
+@property (strong, nonatomic) NSArray *sortedByDateOfBirth;
+@property (strong, nonatomic) NSDate *someDate;
+
 @end
 
 @implementation AppDelegate
@@ -24,9 +27,11 @@
     NSDateComponents *components = [[NSDateComponents alloc] init];
     NSArray *firstNames = [NSArray arrayWithObjects:@"Steve", @"John", @"Richard", @"Paul", @"Gary", @"Zakk", @"Floyd", @"Roger", @"Robert", @"Nancy", nil];
     NSArray *lastNames = [NSArray arrayWithObjects:@"Gilbert", @"Vai", @"Maywather", @"Satriani", @"Moor", @"Waild", @"Bronson", @"Born", @"Osborn", @"Parker", nil];
-  
+    //NSInteger dayInSeconds = 24 * 60 * 60;
+    
+#pragma mark - Level "Pupil"
+    
     /*
-     #pragma mark - Level "Pupil"
      
     for (int i = 0; i < 30; i++) {
         
@@ -53,6 +58,7 @@
     
 #pragma mark - Level "Student"
     
+    /*
     for (int i = 0; i < 30; i++) {
         
         NSInteger randomNames = arc4random_uniform(10);
@@ -87,10 +93,97 @@
     NSLog(@" ");
     for (EGBStudent *stud in sortedByDateOfBirth) {
         NSLog(@"%@", stud);
+    } */
+    
+#pragma mark - Level "Master"
+    
+    
+     for (int i = 0; i < 30; i++) {
+     
+     NSInteger randomNames = arc4random_uniform(10);
+     NSInteger ramdomLastNames = arc4random_uniform(10);
+     
+     EGBStudent *student = [EGBStudent studentName:firstNames[randomNames] lastName:lastNames[ramdomLastNames]];
+     
+     NSInteger ageOfStud = arc4random() % 35 + 17;
+     NSInteger monthOfBirth = arc4random() % 13 + 1;
+     NSInteger dayOfBirth = arc4random() % 30 + 1;
+     
+     [components setYear: - ageOfStud];
+     [components setMonth:monthOfBirth];
+     [components setDay:dayOfBirth];
+     
+     student.dateOfBirth = [calendar dateByAddingComponents:components toDate:date options:0];
+     
+     [allStudents addObject:student];
+     }
+    
+    _sortedByDateOfBirth = [allStudents sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        return [[obj2 dateOfBirth] compare:[obj1 dateOfBirth]];
+    }];
+    
+    NSDate *youngestDate;
+    NSDate *oldestDate;
+    EGBStudent *youngestStudent = [EGBStudent new];
+    EGBStudent *oldestStudent = [EGBStudent new];
+    
+    NSLog(@"Sorted students by dates of birth:");
+    NSLog(@" ");
+    for (EGBStudent *stud in _sortedByDateOfBirth) {
+        NSLog(@"%@", stud);
+        
+        oldestDate = [[_sortedByDateOfBirth objectAtIndex:0] dateOfBirth];
+        youngestDate = [[_sortedByDateOfBirth objectAtIndex:[_sortedByDateOfBirth count] -1] dateOfBirth];
+        
+        youngestStudent = [_sortedByDateOfBirth objectAtIndex:0];
+        oldestStudent = [_sortedByDateOfBirth objectAtIndex:[_sortedByDateOfBirth count]-1];
+        
+
     }
+    
+    //Difference in age between the youngest and oldest students
 
+    NSLog(@" ");
+    NSLog(@"The youngest student is: %@ \nand the oldest student is: %@", youngestStudent, oldestStudent);
+    
+    NSDateComponents* componentsDifference =
+    [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitWeekOfYear | NSCalendarUnitDay fromDate:youngestDate toDate:oldestDate options:0];
+    
+    NSLog(@"Difference in age between the youngest and oldest students");
+    NSLog(@"%@", componentsDifference);
+    
 
+    // Timer for Birthdays
+    _someDate = [NSDate date];
+    [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(birthdayTimer:) userInfo:nil repeats:YES];
+    
     return YES;
+}
+
+- (void) birthdayTimer:(NSDate*) timer {
+    
+    NSDateComponents* dayComponents = [[NSDateComponents alloc] init];
+    dayComponents.day = 1;
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    _someDate = [calendar dateByAddingComponents:dayComponents toDate:_someDate options:0];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"dd.MM"];
+    
+    NSDateFormatter *dateFormatterForCurrentDay = [[NSDateFormatter alloc] init];
+    [dateFormatterForCurrentDay setDateFormat:@"dd.MM.yyyy"];
+    
+    NSLog(@"----------------------------");
+    NSLog(@"Today: %@", [dateFormatterForCurrentDay stringFromDate:_someDate]);
+    
+    //Checking for happy birthdays
+    for (EGBStudent *stud in _sortedByDateOfBirth) {
+        
+        if ([[dateFormatter stringFromDate:stud.dateOfBirth] isEqualToString:[dateFormatter stringFromDate:_someDate]]) {
+            NSLog(@"Today Happy Birthday celebrates %@", stud);
+        }
+    }
 }
 
 
