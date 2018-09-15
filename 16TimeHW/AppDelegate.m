@@ -14,6 +14,8 @@
 @property (strong, nonatomic) NSArray *sortedByDateOfBirth;
 @property (strong, nonatomic) NSDate *someDate;
 
+//@property (assign, nonatomic) NSInteger amountOfWeekDays;
+
 @end
 
 @implementation AppDelegate
@@ -21,6 +23,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
+    /*
     NSMutableArray *allStudents = [NSMutableArray array];
     NSDate *date = [NSDate date];
     NSCalendar *calendar = [NSCalendar currentCalendar];
@@ -28,6 +31,7 @@
     NSArray *firstNames = [NSArray arrayWithObjects:@"Steve", @"John", @"Richard", @"Paul", @"Gary", @"Zakk", @"Floyd", @"Roger", @"Robert", @"Nancy", nil];
     NSArray *lastNames = [NSArray arrayWithObjects:@"Gilbert", @"Vai", @"Maywather", @"Satriani", @"Moor", @"Waild", @"Bronson", @"Born", @"Osborn", @"Parker", nil];
     //NSInteger dayInSeconds = 24 * 60 * 60;
+     */
     
 #pragma mark - Level "Pupil"
     
@@ -97,7 +101,7 @@
     
 #pragma mark - Level "Master"
     
-    
+    /*
      for (int i = 0; i < 30; i++) {
      
      NSInteger randomNames = arc4random_uniform(10);
@@ -156,10 +160,123 @@
     // Timer for Birthdays
     _someDate = [NSDate date];
     [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(birthdayTimer:) userInfo:nil repeats:YES];
+    */
     
+    
+#pragma mark - "SuperMan"
+    
+    // 13. Output weekday for every first day of the month of current month
+    NSLog(@"Output weekday for every first day of the month of current month:");
+    NSLog(@"\n");
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [[NSDateComponents alloc] init];
+    [components setCalendar:calendar];
+    [components setYear:2018];
+    [components setDay:1];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateStyle:NSDateFormatterFullStyle];
+    
+    for (int i = 1; i <= 12; i++) {
+        
+        [components setMonth:i];
+        NSDate *date = [calendar dateFromComponents:components];
+        
+        NSLog(@"%@", [dateFormatter stringFromDate:date]);
+    }
+    
+    // 14. Output date for each Sunday for current year
+    NSLog(@"\n");
+    NSLog(@"Output date for each Sunday for current year:");
+    NSLog(@"\n");
+    
+    NSCalendar *calendarSunday = [NSCalendar currentCalendar];
+    NSDateComponents *componentsSunday = [[NSDateComponents alloc] init];
+    [componentsSunday setCalendar:calendarSunday];
+    [componentsSunday setYear:2018];
+    [componentsSunday setWeekdayOrdinal:1]; // First Sundays of the month
+    
+    NSDateFormatter *dateFormatterSunday = [[NSDateFormatter alloc] init];
+    [dateFormatterSunday setDateStyle:NSDateFormatterFullStyle];
+    
+    for (int i = 1; i <= 12; i++) {
+        
+        [componentsSunday setMonth:i];
+        [componentsSunday setWeekday:1]; // Sundays
+        NSDate *date = [calendarSunday dateFromComponents:componentsSunday];
+        
+        NSLog(@"%@", [dateFormatterSunday stringFromDate:date]);
+    }
+    
+    // 15. Output working days for each month in current year
+    
+    NSLog(@"\n");
+    NSLog(@"Output working days for each month in current year:");
+    NSLog(@"\n");
+    
+    NSCalendar *calendarWorkingDays = [NSCalendar currentCalendar];
+    NSDateComponents *componentsWorkingDays = [[NSDateComponents alloc] init];
+    [componentsWorkingDays setCalendar:calendarWorkingDays];
+    NSInteger year = 2018;
+    
+    [componentsWorkingDays setYear:year];
+    NSDateFormatter *dateFormatterWorkingDays = [[NSDateFormatter alloc] init];
+    [dateFormatterWorkingDays setDateFormat:@"MMMM"];
+    
+    for (int i = 1; i <= 12; i++) {
+        
+        [componentsWorkingDays setMonth:i];
+        [componentsWorkingDays setDay:1];
+        
+        NSDate *date = [calendarWorkingDays dateFromComponents:componentsWorkingDays];
+        
+        NSRange rangeOfDaysInMonth = [calendarWorkingDays rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:date];
+        
+        NSInteger amountDaysInMonth = rangeOfDaysInMonth.length;
+        NSInteger amountOfSundaysInMonth = [self amountOfWeekDays:1 inMonth:i ofYear:year];
+        NSInteger amountOfSaturdaysInMonth = [self amountOfWeekDays:1 inMonth:i ofYear:year];
+
+        NSLog(@"%@: %ld working days", [dateFormatterWorkingDays stringFromDate:date], (amountDaysInMonth - amountOfSundaysInMonth - amountOfSaturdaysInMonth));
+        
+    }
     return YES;
 }
 
+- (NSInteger) amountOfWeekDays:(NSInteger)weekday inMonth:(NSInteger)month ofYear:(NSInteger)year {
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [[NSDateComponents alloc] init];
+    [components setCalendar:calendar];
+    [components setYear:year];
+    [components setMonth:month];
+    [components setDay:weekday];
+    
+    // First weekday of the current month
+    
+    [components setWeekday:weekday];
+    [components setWeekdayOrdinal:1];
+    
+    NSDate *firstWeekDayOfCurrentMonth = [calendar dateFromComponents:components];
+    
+    if (month + 1 > 12) {
+        
+        [components setYear:year + 1];
+        [components setMonth:1];
+        
+    } else {
+        
+        [components setMonth:month + 1];
+    }
+    
+    NSDate *firstWeekDayOfNextMonth = [calendar dateFromComponents:components];
+    
+    NSDateComponents *differenceComponents = [calendar components:NSCalendarUnitDay fromDate:firstWeekDayOfCurrentMonth toDate:firstWeekDayOfNextMonth options:0];
+    
+    return [differenceComponents day]/7;
+}
+
+/*
 - (void) birthdayTimer:(NSDate*) timer {
     
     NSDateComponents* dayComponents = [[NSDateComponents alloc] init];
@@ -185,6 +302,7 @@
         }
     }
 }
+ */
 
 
 - (void)applicationWillResignActive:(UIApplication *)application {
